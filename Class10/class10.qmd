@@ -1,0 +1,181 @@
+---
+title: "Class 10: Structural Bioinformatics Pt.1"
+author: "Cynthia Perez (A16393492)"
+format: pdf
+---
+
+# PDB Statistics
+
+The main repository of biomolecular structure info is the PDB <www.rcsb.org>.
+Let's see what the database contains. Go to “Analyze” > “PDB Statistics” > “by Experimental Method and Molecular Type”.
+Read the csv file:
+```{r}
+stats <- read.csv("pdb_stats.csv", row.names=1)
+stats
+```
+We have to get rid of the commas in order to convert the vector from characters to numeric.  
+```{r}
+x <- stats$X.ray
+sum(as.numeric(gsub(",", "", x)))
+```
+We have a working snippet of code that can be turned into a function to work on more variables from the table of data. 
+```{r}
+sumcomma <- function(x){
+  sum(as.numeric(gsub(",", "", x)))
+}
+```
+Use the `apply()` function to use the `sumcomma()` on the entire dataset.
+```{r}
+#apply the sumcomm() function to the stats dataset over columns 
+apply(stats, 2, sumcomma)
+```
+
+> Q1: What percentage of structures in the PDB are solved by X-Ray and Electron Microscopy.
+
+```{r}
+#take the sum of the total to divide the sum of X.ray and EM by
+n.total <- sumcomma(stats$Total)
+#percentage of x.ray
+(sumcomma(stats$X.ray)/n.total)*100
+#percentage of EM
+(sumcomma(stats$EM)/n.total)*100
+```
+
+> Q2: What proportion of structures in the PDB are protein?
+
+```{r}
+sumcomma(stats["Protein (only)",])/n.total
+```
+
+> Q3: Type HIV in the PDB website search box on the home page and determine how many HIV-1 protease structures are in the current PDB?
+ 
+ In UniProt there are 248,805,744 entries which compared to PDB protein entries 186,898 means there are only ~7% of known sequences with a known structure
+```{r}
+186898/248805744 *100
+```
+
+# Visualizing the HIV-1 protease Structure
+
+Mol*("mol-star") viewer is now everywhere. The homepage is https://molstar.org/viewer/
+
+I want to insert my image from Mol* here
+![First molecular image of 1HSG](1HSG.png)
+
+> Q4: Water molecules normally have 3 atoms. Why do we see just one atom per water molecule in this structure?
+
+We need a better resolution. Hydrogens are too small to be seen so we only see the oxygen atom
+
+> Q5: There is a critical “conserved” water molecule in the binding site. Can you identify this water molecule? What residue number does this water molecule have
+
+Residue number 308
+
+> Q6: Generate and save a figure clearly showing the two distinct chains of HIV-protease along with the ligand. You might also consider showing the catalytic residues ASP 25 in each chain and the critical water (we recommend “Ball & Stick” for these side-chains). Add this figure to your Quarto document.
+
+![1HSG structure with highlighted water and ASP 25 residues](1HSG(2).png)
+
+# Introduction to Bio3D in R
+```{r}
+library(bio3d)
+```
+
+```{r}
+pdb <- read.pdb("1hsg")
+pdb
+```
+```{r}
+head(pdb$atom)
+pdbseq(pdb)[25]
+```
+
+> Q7: How many amino acid residues are there in this pdb object? 
+ 
+198 amino acid residues
+
+> Q8: Name one of the two non-protein residues? 
+
+HOH, MK1
+> Q9: How many protein chains are in this structure? 
+
+2 A and B
+
+# Predicting Funcitonal Motions of a single strucutre
+
+We can do a bioinformatics prediction of functional motions (felxibility/dynamics)
+```{r}
+pdb <- read.pdb("6s36")
+pdb
+```
+```{r}
+m <- nma(pdb)
+plot(m)
+```
+
+```{r}
+mktrj(m, file="adk_m7.pdb")
+```
+
+We download this file into Mol* to create an animation of the structure. 
+
+
+# Comparative Analysis of Protein Structures
+
+Here we will work through a complete pipeline of analysis for a given protein family starting from one single database ID for a member of this family all the way to a deeper understanding of structure, dynamics and function. 
+
+```{r}
+#load up bio3d
+library(bio3d)
+```
+
+```{r}
+#retrive the desired data
+id <- "1ake_A"
+
+aa <- get.seq(id)
+aa
+```
+
+```{r}
+b <- blast.pdb(aa)
+```
+
+```{r}
+hits <- NULL
+hits$pdb.id <- c('1AKE_A','6S36_A','6RZE_A','3HPR_A','1E4V_A','5EJE_A','1E4Y_A','3X2S_A','6HAP_A','6HAM_A','4K46_A','3GMT_A','4PZL_A')
+```
+
+```{r}
+# Download related PDB files
+files <- get.pdb(hits$pdb.id, path="pdbs", split=TRUE, gzip=TRUE)
+```
+
+```{r}
+# Align related PDBs
+pdbs <- pdbaln(files, fit = TRUE, exefile="msa")
+```
+
+Print out the alignment!
+```{r}
+pdbs
+```
+
+```{r}
+# Perform PCA
+pc.xray <- pca(pdbs)
+plot(pc.xray)
+```
+
+
+```{r}
+# Visualize first principal component
+pc1 <- mktrj(pc.xray, pc=1, file="pc_1.pdb")
+```
+
+
+
+
+
+
+
+
+
+
