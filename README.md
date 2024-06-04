@@ -16,7 +16,7 @@ My classwork for [BIMM143 Spring 2024](https://bioboot.github.io/bimm143_S24/) a
 
 - **Class 11** [Genome Informatics and High Throughput Sequencing](https://github.com/cynthiajperez/bimm143_github/blob/main/Class11/Class11.pdf)
 
-- **Class 13** [Transcriptomics and Analysis of RNA-Seq Data]()
+- **Class 13** [Transcriptomics and Analysis of RNA-Seq Data](https://github.com/cynthiajperez/bimm143_github/blob/main/Class13/Class13.pdf)
 
 - **Class 14** []()
 
