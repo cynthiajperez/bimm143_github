@@ -18,6 +18,6 @@ My classwork for [BIMM143 Spring 2024](https://bioboot.github.io/bimm143_S24/) a
 
 - **Class 13** [Transcriptomics and Analysis of RNA-Seq Data](https://github.com/cynthiajperez/bimm143_github/blob/main/Class13/Class13.pdf)
 
-- **Class 14** []()
+- **Class 14** [RNA-Seq Mini Project](https://github.com/cynthiajperez/bimm143_github/blob/main/Class14/Class14.pdf)
 
-- **Class 18** []()
+- **Class 18** [Investigating Pertussis Mini Project](https://github.com/cynthiajperez/bimm143_github/blob/main/Class18/class18.pdf)
